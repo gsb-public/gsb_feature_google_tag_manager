@@ -1,0 +1,7 @@
+<?php
+
+function gsb_feature_google_tag_manager_update_7001() {
+  if (!module_exists('google_tag')) {
+    module_enable(array('google_tag'));
+  }
+}
