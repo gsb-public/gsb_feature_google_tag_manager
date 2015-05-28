@@ -3,3 +3,31 @@
  * @file
  * Code for the GSB Feature Google Tag Manager
  */
+
+/**
+ * Implements hook_page_alter().
+ *
+ * Adds a post_render callback.
+ *
+ * @see drupal_render_page()
+ */
+function gsb_feature_google_tag_manager_page_alter(&$page) {
+  if (!google_tag_insert_snippet()) {
+    return;
+  }
+  if (arg(0) == 'node' && is_numeric(arg(1))) {
+    $node = node_load(arg(1));
+    for ($index = 0; $index < 3; $index++) {
+      if (!empty($node->field_key_taxonomy[$node->language][$index]['target_id'])) {
+        $tid = $node->field_key_taxonomy[$node->language][$index]['target_id'];
+        $dimensions[$index + 1] = taxonomy_term_load($tid)->name;
+      }
+    }
+    $dimensions[4] = node_type_get_name($node);
+    $settings[] = array(
+      'dimensions' => $dimensions,
+    );
+    drupal_add_js(array("gsb_feature_google_tag_manager_settings" => $settings), 'setting');
+    drupal_add_js(drupal_get_path('module', 'gsb_feature_google_tag_manager') . '/js/gsb_feature_google_tag_manager.js');
+  }
+}
