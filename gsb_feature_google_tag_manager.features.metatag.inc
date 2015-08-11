@@ -14,16 +14,16 @@ function gsb_feature_google_tag_manager_metatag_export_default() {
   $config['node'] = array(
     'instance' => 'node',
     'config' => array(
-      'gsb-metatags:dimension1' => array(
+      'gsb:dimension1' => array(
         'value' => '[node:field-key-taxonomy:0]',
       ),
-      'gsb-metatags:dimension2' => array(
+      'gsb:dimension2' => array(
         'value' => '[node:field-key-taxonomy:1]',
       ),
-      'gsb-metatags:dimension3' => array(
+      'gsb:dimension3' => array(
         'value' => '[node:field-key-taxonomy:2]',
       ),
-      'gsb-metatags:dimension4' => array(
+      'gsb:dimension4' => array(
         'value' => '[node:content-type:machine-name]',
       ),
       'title' => array(
