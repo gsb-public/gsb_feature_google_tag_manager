@@ -54,3 +54,135 @@ function gsb_feature_google_tag_manager_page_process(&$children, $elements) {
 
   return $children;
 }
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function gsb_feature_google_tag_manager_ctools_plugin_api($owner, $api) {
+  if ($owner == 'metatag' && $api == 'metatag') {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * Implements hook_metatag_info().
+ */
+function gsb_feature_google_tag_manager_metatag_info()
+{
+  $info['groups']['gsb-metatags'] = array(
+    'label' => t('GSB Metatags'),
+    'description' => t('A set of meta tags specifically for the GSB Public Site</a>.', array('!url' => 'http://gsb.stanford.edu/')),
+    'form' => array(
+      '#weight' => 70,
+    ),
+  );
+
+  // GSB meta tags stack after the Twitter tags.
+  $weight = 70;
+
+  // Defaults used for all cards.
+  $defaults = array(
+    'class' => 'DrupalTextMetaTag',
+    'group' => 'gsb-metatags',
+    //'element' => array(
+    //'#theme' => 'metatag_gsb_metatags',
+    //),
+  );
+
+  $info['tags']['gsb-metatags:dimension1'] = array(
+    'label' => t('GTM Dimension 1'),
+    'description' => t('Notes: Dimension 1 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb-metatags:dimension2'] = array(
+    'label' => t('GTM Dimension 2'),
+    'description' => t('Notes: Dimension 2 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb-metatags:dimension3'] = array(
+    'label' => t('GTM Dimension 3'),
+    'description' => t('Notes: Dimension 3 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb-metatags:dimension4'] = array(
+    'label' => t('GTM Dimension 4'),
+    'description' => t('Notes: Dimension 4 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  return $info;
+}
+
+/**
+ * Implements hook_node_view_alter().
+ * We are doing this to display resources as part of the metatags. We needed
+ * to make this so complicated, because when clearing the cache the filters get
+ * run on all the nodes that are loaded so we can't determine which one is the
+ * correct one for the node that is being viewed.
+ */
+function gsb_feature_google_tag_manager_node_view_alter($build) {
+  $current_node = menu_get_object();
+  // If we are not on the current node then return.
+  if (empty($build['#node']->nid) || empty($current_node) || $build['#node']->nid !== $current_node->nid) {
+    return;
+  }
+
+  // Loop through all fields.
+  foreach ($build as $field => $info) {
+    if (is_array($info) && !empty($info['#items'])) {
+      // Loop through all items in the field.
+      foreach ($info['#items'] as $key => $item) {
+        // Make sure it has a format attached to it.
+        if (!empty($item['format'])) {
+          // Make sure the format hanldes resources.
+          $filters = filter_list_format($item['format']);
+          if (!empty($filters['resources_filter']->status)) {
+
+            // Find all the resources.
+            $matches = array();
+            preg_match_all('/\[\[resource::.*?\]\]/s', $item['value'], $matches);
+
+            // Get the type of resource for each match.
+            $types = array();
+            foreach ($matches[0] as $match) {
+              // Strip brackets
+              $match = str_replace("[[", "", $match);
+              $match = str_replace("]]", "", $match);
+
+              // Split up the bigger piecew.
+              $options = explode('::', $match);
+              $parameters = array();
+
+              // Loop through all the tag/value sets.
+              foreach ($options as $index => $option) {
+                // Make sure we are not on the first one.
+                if ($index > 0) {
+                  // Find the key value pairs.
+                  $option_value = explode(':', $option);
+
+                  $key = array_shift($option_value);
+                  $value = implode(':', $option_value);
+                  $parameters = array_merge($parameters, array($key => $value));
+                }
+              }
+              $types[] = $parameters['type'];
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Build our metatag element and add it to the header.
+  $element = array(
+    '#tag' => 'meta',
+    '#attributes' => array(
+      'property' => 'gsb:resources',
+      'content' => implode('|', $types),
+    ),
+  );
+  drupal_add_html_head($element, 'gsb_resources');
+}
