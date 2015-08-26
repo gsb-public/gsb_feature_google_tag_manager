@@ -173,13 +173,15 @@ function gsb_feature_google_tag_manager_node_view_alter($build) {
     }
   }
 
-  // Build our metatag element and add it to the header.
-  $element = array(
-    '#tag' => 'meta',
-    '#attributes' => array(
-      'name' => 'gsb:resources',
-      'content' => implode('|', $types),
-    ),
-  );
-  drupal_add_html_head($element, 'gsb_resources');
+  if (!empty($types)) {
+    // Build our metatag element and add it to the header.
+    $element = array(
+      '#tag' => 'meta',
+      '#attributes' => array(
+        'name' => 'gsb:resources',
+        'content' => implode('|', $types),
+      ),
+    );
+    drupal_add_html_head($element, 'gsb_resources');
+  }
 }
