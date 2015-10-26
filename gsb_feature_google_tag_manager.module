@@ -32,26 +32,27 @@ function gsb_feature_google_tag_manager_page_process(&$children, $elements) {
   if (arg(0) == 'node' && is_numeric(arg(1))) {
 
     $node = node_load(arg(1));
-    $type_name = node_type_get_name($node);
+    if (!empty($node)) {
+      $type_name = node_type_get_name($node);
 
-    $script = "<script> dataLayer = []; dataLayer.push({";
+      $script = "<script> dataLayer = []; dataLayer.push({";
 
-    for ($index = 0; $index < 3; $index++) {
-      if (!empty($node->field_key_taxonomy[$node->language][$index]['target_id'])) {
-        $tid = $node->field_key_taxonomy[$node->language][$index]['target_id'];
-        $taxonomy = taxonomy_term_load($tid);
-        $dim = $index + 1;
-        $script .= " 'dimension$dim' : '$taxonomy->name', ";
+      for ($index = 0; $index < 3; $index++) {
+        if (!empty($node->field_key_taxonomy[$node->language][$index]['target_id'])) {
+          $tid = $node->field_key_taxonomy[$node->language][$index]['target_id'];
+          $taxonomy = taxonomy_term_load($tid);
+          $dim = $index + 1;
+          $script .= " 'dimension$dim' : '$taxonomy->name', ";
+        }
       }
+
+      $script .= " 'dimension4' : '$type_name' ";
+      $script .= "});</script>";
+
+      // Insert snippet after the opening body tag.
+      $children = preg_replace('@<body[^>]*>@', '$0' . $script, $children, 1);
     }
-
-    $script .= " 'dimension4' : '$type_name' ";
-    $script .= "});</script>";
-
-    // Insert snippet after the opening body tag.
-    $children = preg_replace('@<body[^>]*>@', '$0' . $script, $children, 1);
   }
-
   return $children;
 }
 
