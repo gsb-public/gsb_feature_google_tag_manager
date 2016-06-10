@@ -7,3 +7,8 @@ project = gsb_feature_google_tag_manager
 dependencies[] = metatag
 features[features_api][] = api:2
 features[metatag][] = node
+
+; Information added by drush on 2016-06-08
+version = "5.06"
+project = "gsb_feature_google_tag_manager"
+datestamp = "1465409156"

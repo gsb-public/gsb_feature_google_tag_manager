@@ -59,6 +59,102 @@ function gsb_feature_google_tag_manager_metatag_info()
     'weight' => ++$weight,
   ) + $defaults;
 
+  $info['tags']['gsb:dimension5'] = array(
+    'label' => t('GTM Dimension 5'),
+    'description' => t('Notes: Dimension 5 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension6'] = array(
+    'label' => t('GTM Dimension 6'),
+    'description' => t('Notes: Dimension 6 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension7'] = array(
+    'label' => t('GTM Dimension 7'),
+    'description' => t('Notes: Dimension 7 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension8'] = array(
+    'label' => t('GTM Dimension 8'),
+    'description' => t('Notes: Dimension 8 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension9'] = array(
+    'label' => t('GTM Dimension 9'),
+    'description' => t('Notes: Dimension 9 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension10'] = array(
+    'label' => t('GTM Dimension 10'),
+    'description' => t('Notes: Dimension 10 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension11'] = array(
+    'label' => t('GTM Dimension 11'),
+    'description' => t('Notes: Dimension 11 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension12'] = array(
+    'label' => t('GTM Dimension 12'),
+    'description' => t('Notes: Dimension 12 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension13'] = array(
+    'label' => t('GTM Dimension 13'),
+    'description' => t('Notes: Dimension 13 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension14'] = array(
+    'label' => t('GTM Dimension 14'),
+    'description' => t('Notes: Dimension 14 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension15'] = array(
+    'label' => t('GTM Dimension 15'),
+    'description' => t('Notes: Dimension 15 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension16'] = array(
+    'label' => t('GTM Dimension 16'),
+    'description' => t('Notes: Dimension 16 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension17'] = array(
+    'label' => t('GTM Dimension 17'),
+    'description' => t('Notes: Dimension 17 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension18'] = array(
+    'label' => t('GTM Dimension 18'),
+    'description' => t('Notes: Dimension 18 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension19'] = array(
+    'label' => t('GTM Dimension 19'),
+    'description' => t('Notes: Dimension 19 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
+  $info['tags']['gsb:dimension20'] = array(
+    'label' => t('GTM Dimension 20'),
+    'description' => t('Notes: Dimension 20 is used by Google Tag Manager'),
+    'weight' => ++$weight,
+  ) + $defaults;
+
   return $info;
 }
 
@@ -83,7 +179,7 @@ function gsb_feature_google_tag_manager_node_view_alter($build) {
       foreach ($info['#items'] as $key => $item) {
         // Make sure it has a format attached to it.
         if (!empty($item['format'])) {
-          // Make sure the format hanldes resources.
+          // Make sure the format handles resources.
           $filters = filter_list_format($item['format']);
           if (!empty($filters['resources_filter']->status)) {
 
@@ -133,4 +229,66 @@ function gsb_feature_google_tag_manager_node_view_alter($build) {
     );
     drupal_add_html_head($element, 'gsb_resources');
   }
+
+  $fred = 'red';
+
+  // add the gsb:node metatag - which contains the nid
+  $element = array(
+    '#tag' => 'meta',
+    '#attributes' => array(
+      'name' => 'gsb:node',
+      'content' => $build['#node']->nid,
+    ),
+  );
+  drupal_add_html_head($element, 'gsb_node');
+
+}
+
+function gsb_feature_google_tag_manager_token_info() {
+  $info['tokens']['node']['gtm-author-name'] = array(
+    'name' => t('Author Name'),
+    'description' => t('Author Name'),
+  );
+  $info['tokens']['node']['gtm-circle-topics'] = array(
+    'name' => t('Circle Topics'),
+    'description' => t('Circle Topics'),
+  );
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function gsb_feature_google_tag_manager_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+  if ($type == 'node' && !empty($data['node'])) {
+    $node = $data['node'];
+    $language = $node->language;
+    foreach ($tokens as $name => $original) {
+      if (stristr($name, 'gtm-author-name')) {
+        $parameters = explode(':', $name);
+        $name = array_shift($parameters);
+        $output = array();
+        foreach($node->field_authors[$language] as $author) {
+          $ewrap_author = entity_metadata_wrapper('field_collection_item', $author['value']);
+          $first_name = $ewrap_author->field_first_name->value();
+          $last_name = $ewrap_author->field_last_name->value();
+          $full_name = $first_name . ' ' . $last_name;
+          $output[] = empty($output) ? $full_name : '|' . $full_name;
+        }
+        $replacements[$original] = implode('', $output);
+      }
+      if (stristr($name, 'gtm-circle-topics')) {
+        $parameters = explode(':', $name);
+        $name = array_shift($parameters);
+        $output = array();
+        foreach($node->field_circle_topics[$language] as $topic) {
+          $term = taxonomy_term_load($topic['tid']);
+          $output[] = empty($output) ? $term->name : '|' . $term->name;
+        }
+        $replacements[$original] = implode('', $output);
+      }
+    }
+  }
+  return $replacements;
 }

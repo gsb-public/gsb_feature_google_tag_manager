@@ -26,6 +26,54 @@ function gsb_feature_google_tag_manager_metatag_export_default() {
       'gsb:dimension4' => array(
         'value' => '[node:content-type:machine-name]',
       ),
+      'gsb:dimension5' => array(
+        'value' => '',
+      ),
+      'gsb:dimension6' => array(
+        'value' => '',
+      ),
+      'gsb:dimension7' => array(
+        'value' => '',
+      ),
+      'gsb:dimension8' => array(
+        'value' => '',
+      ),
+      'gsb:dimension9' => array(
+        'value' => '',
+      ),
+      'gsb:dimension10' => array(
+        'value' => '',
+      ),
+      'gsb:dimension11' => array(
+        'value' => '',
+      ),
+      'gsb:dimension12' => array(
+        'value' => '',
+      ),
+      'gsb:dimension13' => array(
+        'value' => '',
+      ),
+      'gsb:dimension14' => array(
+        'value' => '',
+      ),
+      'gsb:dimension15' => array(
+        'value' => '',
+      ),
+      'gsb:dimension16' => array(
+        'value' => '',
+      ),
+      'gsb:dimension17' => array(
+        'value' => '',
+      ),
+      'gsb:dimension18' => array(
+        'value' => '',
+      ),
+      'gsb:dimension19' => array(
+        'value' => '',
+      ),
+      'gsb:dimension20' => array(
+        'value' => '',
+      ),
       'title' => array(
         'value' => '[node:title] | [site:name]',
       ),
