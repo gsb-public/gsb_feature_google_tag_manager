@@ -230,8 +230,6 @@ function gsb_feature_google_tag_manager_node_view_alter($build) {
     drupal_add_html_head($element, 'gsb_resources');
   }
 
-  $fred = 'red';
-
   // add the gsb:node metatag - which contains the nid
   $element = array(
     '#tag' => 'meta',
