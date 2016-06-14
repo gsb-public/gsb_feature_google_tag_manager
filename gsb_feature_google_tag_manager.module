@@ -243,6 +243,10 @@ function gsb_feature_google_tag_manager_node_view_alter($build) {
 }
 
 function gsb_feature_google_tag_manager_token_info() {
+  $info['tokens']['node']['gtm-centers-research-programs'] = array(
+    'name' => t('Centers Research Programs'),
+    'description' => t('Centers Research Programs'),
+  );
   $info['tokens']['node']['gtm-author-name'] = array(
     'name' => t('Author Name'),
     'description' => t('Author Name'),
@@ -269,9 +273,17 @@ function gsb_feature_google_tag_manager_tokens($type, $tokens, array $data = arr
         $output = array();
         foreach($node->field_authors[$language] as $author) {
           $ewrap_author = entity_metadata_wrapper('field_collection_item', $author['value']);
-          $first_name = $ewrap_author->field_first_name->value();
-          $last_name = $ewrap_author->field_last_name->value();
-          $full_name = $first_name . ' ' . $last_name;
+          $fac_or_other = $ewrap_author->field_person_fac_or_other->value();
+          $faculty_ref = $ewrap_author->field_person_fac_single_ref->value();
+          $full_name = '';
+          if ($fac_or_other == "UseEntityReference") {
+            $full_name = $faculty_ref->title;
+          }
+          else {
+            $first_name = $ewrap_author->field_first_name->value();
+            $last_name = $ewrap_author->field_last_name->value();
+            $full_name = $first_name . ' ' . $last_name;
+          }
           $output[] = empty($output) ? $full_name : '|' . $full_name;
         }
         $replacements[$original] = implode('', $output);
@@ -283,6 +295,15 @@ function gsb_feature_google_tag_manager_tokens($type, $tokens, array $data = arr
         foreach($node->field_circle_topics[$language] as $topic) {
           $term = taxonomy_term_load($topic['tid']);
           $output[] = empty($output) ? $term->name : '|' . $term->name;
+        }
+        $replacements[$original] = implode('', $output);
+      }
+      if (stristr($name, 'gtm-centers-research-programs')) {
+        $ewrap_node = entity_metadata_wrapper('node', $node->nid);
+        $centers = $ewrap_node->field_centers_research_programs->value();
+        $output = array();
+        foreach($centers as $center) {
+          $output[] = empty($output) ? $center->name : '|' . $center->name;
         }
         $replacements[$original] = implode('', $output);
       }
