@@ -292,11 +292,13 @@ function gsb_feature_google_tag_manager_tokens($type, $tokens, array $data = arr
         $parameters = explode(':', $name);
         $name = array_shift($parameters);
         $output = array();
-        foreach($node->field_circle_topics[$language] as $topic) {
-          $term = taxonomy_term_load($topic['tid']);
-          $output[] = empty($output) ? $term->name : '|' . $term->name;
+        if (!empty($node->field_circle_topics[$language])) {
+          foreach($node->field_circle_topics[$language] as $topic) {
+            $term = taxonomy_term_load($topic['tid']);
+            $output[] = empty($output) ? $term->name : '|' . $term->name;
+          }
+          $replacements[$original] = implode('', $output);
         }
-        $replacements[$original] = implode('', $output);
       }
       if (stristr($name, 'gtm-centers-research-programs')) {
         $ewrap_node = entity_metadata_wrapper('node', $node->nid);
