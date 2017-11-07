@@ -271,20 +271,22 @@ function gsb_feature_google_tag_manager_tokens($type, $tokens, array $data = arr
         $parameters = explode(':', $name);
         $name = array_shift($parameters);
         $output = array();
-        foreach($node->field_authors[$language] as $author) {
-          $ewrap_author = entity_metadata_wrapper('field_collection_item', $author['value']);
-          $fac_or_other = $ewrap_author->field_person_fac_or_other->value();
-          $faculty_ref = $ewrap_author->field_person_fac_single_ref->value();
-          $full_name = '';
-          if ($fac_or_other == "UseEntityReference") {
-            $full_name = $faculty_ref->title;
+        if (isset($node->field_authors) && !empty($node->field_authors)) {
+          foreach($node->field_authors[$language] as $author) {
+            $ewrap_author = entity_metadata_wrapper('field_collection_item', $author['value']);
+            $fac_or_other = $ewrap_author->field_person_fac_or_other->value();
+            $faculty_ref = $ewrap_author->field_person_fac_single_ref->value();
+            $full_name = '';
+            if ($fac_or_other == "UseEntityReference") {
+              $full_name = $faculty_ref->title;
+            }
+            else {
+              $first_name = $ewrap_author->field_first_name->value();
+              $last_name = $ewrap_author->field_last_name->value();
+              $full_name = $first_name . ' ' . $last_name;
+            }
+            $output[] = empty($output) ? $full_name : '|' . $full_name;
           }
-          else {
-            $first_name = $ewrap_author->field_first_name->value();
-            $last_name = $ewrap_author->field_last_name->value();
-            $full_name = $first_name . ' ' . $last_name;
-          }
-          $output[] = empty($output) ? $full_name : '|' . $full_name;
         }
         $replacements[$original] = implode('', $output);
       }
