@@ -2,13 +2,9 @@ name = GSB Feature Google Tag Manager
 description = Adds Google Tag Manager
 core = 7.x
 package = GSB
-version = 7.x-1.0
+version = 5.06
 project = gsb_feature_google_tag_manager
 dependencies[] = metatag
+datestamp = 1465409156
 features[features_api][] = api:2
 features[metatag][] = node
-
-; Information added by drush on 2016-06-08
-version = "5.06"
-project = "gsb_feature_google_tag_manager"
-datestamp = "1465409156"
